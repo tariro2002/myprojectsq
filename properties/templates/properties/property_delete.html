@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Zimbabwe Property Registry</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial; background: #f5f0ff; min-height: 100vh; }
+
+        .navbar {
+            background: #6a0dad;
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(106,13,173,0.3);
+        }
+        .navbar h1 { color: white; font-size: 22px; }
+        .navbar a { color: white; text-decoration: none; font-size: 14px; }
+
+        .container { padding: 40px; max-width: 1100px; margin: 0 auto; }
+
+        .stats {
+            background: linear-gradient(135deg, #6a0dad, #9b4dca);
+            color: white;
+            padding: 24px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .stats h2 { font-size: 36px; }
+        .stats p { font-size: 14px; opacity: 0.9; }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        /* Search box */
+        .search-box {
+            display: flex;
+            gap: 8px;
+        }
+        .search-box input {
+            padding: 10px 14px;
+            border: 2px solid #f0e0ff;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            width: 250px;
+        }
+        .search-box input:focus { border-color: #6a0dad; }
+        .search-box button {
+            background: #6a0dad;
+            color: white;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn {
+            background: #6a0dad;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            display: inline-block;
+            box-shadow: 0 4px 12px rgba(106,13,173,0.3);
+        }
+        .btn:hover { background: #4a0080; }
+
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+        th { background: #6a0dad; color: white; padding: 14px 16px; text-align: left; font-size: 14px; }
+        td { padding: 14px 16px; border-bottom: 1px solid #f0e0ff; font-size: 14px; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #f5f0ff; }
+
+        .badge {
+            background: #f0e0ff;
+            color: #6a0dad;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .view-link {
+            background: #6a0dad;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 12px;
+        }
+        .edit-link {
+            background: #ff9800;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 12px;
+        }
+        .delete-link {
+            background: #cc0000;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 12px;
+        }
+        .actions { display: flex; gap: 6px; }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <h1>🏠 Zimbabwe Property Registry</h1>
+        <a href="/admin">Admin Panel</a>
+    </div>
+
+    <div class="container">
+
+        <div class="stats">
+            <div>
+                <h2>{{ properties.count }}</h2>
+                <p>Total Properties Registered</p>
+            </div>
+            <div style="font-size: 48px;">🏡</div>
+        </div>
+
+        <div class="top-bar">
+            <a href="/properties/add/" class="btn">+ Add New Property</a>
+
+            <!-- Search form -->
+            <form method="GET" class="search-box">
+                <input type="text" name="search" placeholder="Search address or owner..." value="{{ search }}">
+                <button type="submit">🔍 Search</button>
+            </form>
+        </div>
+
+        <table>
+            <tr>
+                <th>Address</th>
+                <th>Owner</th>
+                <th>Size (sqm)</th>
+                <th>Type</th>
+                <th>Actions</th>
+            </tr>
+
+            {% for property in properties %}
+            <tr>
+                <td>{{ property.address }}</td>
+                <td>{{ property.owner_name }}</td>
+                <td>{{ property.size }}</td>
+                <td><span class="badge">{{ property.property_type }}</span></td>
+                <td>
+                    <div class="actions">
+                        <a href="/properties/{{ property.pk }}/" class="view-link">View</a>
+                        <a href="/properties/{{ property.pk }}/edit/" class="edit-link">Edit</a>
+                        <a href="/properties/{{ property.pk }}/delete/" class="delete-link">Delete</a>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" style="text-align:center; color:#999; padding: 40px;">
+                    No properties found!
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+
+    </div>
+
+</body>
+</html>
