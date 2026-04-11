@@ -6,35 +6,116 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: Arial; background: #f5f0ff; min-height: 100vh; }
         .navbar { background: #6a0dad; padding: 16px 40px; display: flex; justify-content: space-between; align-items: center; }
-        .navbar h1 { color: white; font-size: 22px; }
+        .navbar h1 { color: white; font-size: 20px; }
         .navbar a { color: white; text-decoration: none; }
-        .container { padding: 40px; max-width: 600px; margin: 0 auto; }
+        .container { padding: 30px 40px; max-width: 800px; margin: 0 auto; }
         h2 { color: #6a0dad; margin-bottom: 24px; font-size: 24px; }
-        .card { background: white; border-radius: 12px; padding: 32px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+
+        .card { background: white; border-radius: 12px; padding: 32px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .full-width { grid-column: 1 / -1; }
+
         p { margin-bottom: 16px; }
-        label { display: block; font-weight: bold; color: #6a0dad; font-size: 14px; margin-bottom: 6px; }
-        input, select { width: 100%; padding: 10px 14px; border: 2px solid #f0e0ff; border-radius: 8px; font-size: 14px; outline: none; }
-        input:focus, select:focus { border-color: #6a0dad; }
-        .btn { background: #6a0dad; color: white; padding: 12px 28px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 8px; }
+        label { display: block; font-weight: bold; color: #6a0dad; font-size: 13px; margin-bottom: 6px; }
+        input, select, textarea { width: 100%; padding: 10px 14px; border: 2px solid #f0e0ff; border-radius: 8px; font-size: 14px; outline: none; font-family: Arial; }
+        input:focus, select:focus, textarea:focus { border-color: #6a0dad; }
+
+        .section-title { color: #6a0dad; font-weight: bold; font-size: 14px; margin: 20px 0 10px 0; padding-bottom: 6px; border-bottom: 2px solid #f0e0ff; grid-column: 1 / -1; }
+
+        .btn { background: #6a0dad; color: white; padding: 12px 28px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 16px; }
         .btn:hover { background: #4a0080; }
-        .back-link { display: inline-block; margin-top: 24px; color: #6a0dad; text-decoration: none; font-weight: bold; }
+        .back-link { display: inline-block; margin-top: 16px; color: #6a0dad; text-decoration: none; font-weight: bold; }
     </style>
 </head>
 <body>
     <div class="navbar">
-        <h1>Zimbabwe Property Registry</h1>
-        <a href="/admin">Admin Panel</a>
+        <h1>🏠 Zimbabwe Property Registry</h1>
+        <a href="/properties/">Back to List</a>
     </div>
+
     <div class="container">
-        <h2>Add New Property</h2>
+        <h2>➕ Add New Property</h2>
+
         <div class="card">
-            <form method="POST">
+            <form method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
-                {{ form.as_p }}
-                <button type="submit" class="btn">Save Property</button>
+
+                <div class="grid">
+                    <div class="section-title">Owner Information</div>
+
+                    <p>
+                        <label>Owner Name</label>
+                        {{ form.owner_name }}
+                    </p>
+                    <p>
+                        <label>Owner Email</label>
+                        {{ form.owner_email }}
+                    </p>
+                    <p>
+                        <label>Owner Phone</label>
+                        {{ form.owner_phone }}
+                    </p>
+
+                    <div class="section-title">Property Details</div>
+
+                    <p class="full-width">
+                        <label>Address</label>
+                        {{ form.address }}
+                    </p>
+                    <p>
+                        <label>City</label>
+                        {{ form.city }}
+                    </p>
+                    <p>
+                        <label>Province</label>
+                        {{ form.province }}
+                    </p>
+                    <p>
+                        <label>Property Type</label>
+                        {{ form.property_type }}
+                    </p>
+                    <p>
+                        <label>Status</label>
+                        {{ form.status }}
+                    </p>
+                    <p>
+                        <label>Size (sqm)</label>
+                        {{ form.size }}
+                    </p>
+                    <p>
+                        <label>Value (USD)</label>
+                        {{ form.value }}
+                    </p>
+
+                    <div class="section-title">GPS Location (Optional)</div>
+
+                    <p>
+                        <label>GPS Latitude</label>
+                        {{ form.gps_latitude }}
+                    </p>
+                    <p>
+                        <label>GPS Longitude</label>
+                        {{ form.gps_longitude }}
+                    </p>
+
+                    <div class="section-title">Additional</div>
+
+                    <p class="full-width">
+                        <label>Property Image</label>
+                        {{ form.image }}
+                    </p>
+                    <p class="full-width">
+                        <label>Notes</label>
+                        {{ form.notes }}
+                    </p>
+                </div>
+
+                <button type="submit" class="btn">💾 Save Property</button>
             </form>
         </div>
-        <a href="/properties/" class="back-link">Back to all properties</a>
+
+        <a href="/properties/" class="back-link">← Back to all properties</a>
     </div>
 </body>
 </html>

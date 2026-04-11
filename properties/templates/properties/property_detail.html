@@ -5,103 +5,118 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: Arial; background: #f5f0ff; min-height: 100vh; }
+        .navbar { background: #6a0dad; padding: 16px 40px; display: flex; justify-content: space-between; align-items: center; }
+        .navbar h1 { color: white; font-size: 20px; }
+        .navbar a { color: white; text-decoration: none; }
+        .container { padding: 30px 40px; max-width: 900px; margin: 0 auto; }
 
-        .navbar {
-            background: #6a0dad;
-            padding: 16px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 8px rgba(233,30,140,0.3);
-        }
-        .navbar h1 { color: white; font-size: 22px; }
-        .navbar a { color: white; text-decoration: none; font-size: 14px; }
-
-        .container { padding: 40px; max-width: 700px; margin: 0 auto; }
-
-        .card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-            overflow: hidden;
-        }
-
-        .card-header {
-            background: linear-gradient(135deg, #6a0dad, #9b4dca);
-            padding: 24px;
-            color: white;
-        }
+        .card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 20px; }
+        .card-header { background: linear-gradient(135deg, #6a0dad, #9b4dca); padding: 24px; color: white; }
         .card-header h2 { font-size: 22px; }
-        .card-header p { font-size: 14px; opacity: 0.9; margin-top: 4px; }
-
+        .card-header p { font-size: 13px; opacity: 0.9; margin-top: 4px; }
         .card-body { padding: 24px; }
 
-        .field {
-            display: flex;
-            justify-content: space-between;
-            padding: 14px 0;
-            border-bottom: 1px solid #f0e0ff;
-        }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .field { padding: 12px 0; border-bottom: 1px solid #f0e0ff; }
         .field:last-child { border-bottom: none; }
-        .label { font-weight: bold; color: #6a0dad; font-size: 14px; }
-        .value { color: #333; font-size: 14px; }
+        .label { font-size: 12px; font-weight: bold; color: #6a0dad; margin-bottom: 4px; }
+        .value { font-size: 14px; color: #333; }
 
-        .badge {
-            background: #f0e0ff;
-            color: #6a0dad;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-        }
+        .badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+        .badge-active { background: #e0f7e0; color: #2e7d32; }
+        .badge-sold { background: #e0e0ff; color: #1a237e; }
+        .badge-disputed { background: #ffe0e0; color: #c62828; }
+        .badge-pending { background: #fff3e0; color: #e65100; }
 
-        .back-link {
-            display: inline-block;
-            margin-top: 24px;
-            color: #6a0dad;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        .back-link:hover { color: #4a0080; }
+        .btn-row { display: flex; gap: 10px; margin-top: 20px; }
+        .btn { background: #6a0dad; color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px; font-size: 14px; font-weight: bold; }
+        .btn-orange { background: #ff9800; }
+        .btn-red { background: #cc0000; }
+        .back-link { color: #6a0dad; text-decoration: none; font-weight: bold; font-size: 14px; display: inline-block; margin-bottom: 20px; }
+
+        .property-image { width: 100%; max-height: 300px; object-fit: cover; }
     </style>
 </head>
 <body>
-
     <div class="navbar">
         <h1>🏠 Zimbabwe Property Registry</h1>
-        <a href="/admin">Admin Panel</a>
+        <a href="/properties/">Back to List</a>
     </div>
 
     <div class="container">
+        <a href="/properties/" class="back-link">← Back to all properties</a>
 
         <div class="card">
             <div class="card-header">
                 <h2>{{ property.address }}</h2>
-                <p>Property Details</p>
+                <p>{{ property.city }}, {{ property.province }}</p>
             </div>
+
+            {% if property.image %}
+            <img src="{{ property.image.url }}" class="property-image" alt="Property Image">
+            {% endif %}
+
             <div class="card-body">
-                <div class="field">
-                    <span class="label">Owner</span>
-                    <span class="value">{{ property.owner_name }}</span>
+                <div class="grid">
+                    <div>
+                        <div class="field">
+                            <div class="label">Owner Name</div>
+                            <div class="value">{{ property.owner_name }}</div>
+                        </div>
+                        <div class="field">
+                            <div class="label">Owner Email</div>
+                            <div class="value">{{ property.owner_email|default:"-" }}</div>
+                        </div>
+                        <div class="field">
+                            <div class="label">Owner Phone</div>
+                            <div class="value">{{ property.owner_phone|default:"-" }}</div>
+                        </div>
+                        <div class="field">
+                            <div class="label">Property Type</div>
+                            <div class="value">{{ property.property_type }}</div>
+                        </div>
+                        <div class="field">
+                            <div class="label">Status</div>
+                            <div class="value"><span class="badge badge-{{ property.status }}">{{ property.status }}</span></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="field">
+                            <div class="label">Size</div>
+                            <div class="value">{{ property.size }} sqm</div>
+                        </div>
+                        <div class="field">
+                            <div class="label">Value</div>
+                            <div class="value">{% if property.value %}${{ property.value|floatformat:0 }}{% else %}-{% endif %}</div>
+                        </div>
+                        <div class="field">
+                            <div class="label">GPS Coordinates</div>
+                            <div class="value">{% if property.gps_latitude %}{{ property.gps_latitude }}, {{ property.gps_longitude }}{% else %}-{% endif %}</div>
+                        </div>
+                        <div class="field">
+                            <div class="label">Date Registered</div>
+                            <div class="value">{{ property.date_registered|date:"d M Y" }}</div>
+                        </div>
+                        <div class="field">
+                            <div class="label">Registered By</div>
+                            <div class="value">{{ property.registered_by|default:"-" }}</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="field">
-                    <span class="label">Size</span>
-                    <span class="value">{{ property.size }} sqm</span>
+
+                {% if property.notes %}
+                <div class="field" style="margin-top:16px;">
+                    <div class="label">Notes</div>
+                    <div class="value">{{ property.notes }}</div>
                 </div>
-                <div class="field">
-                    <span class="label">Type</span>
-                    <span class="value"><span class="badge">{{ property.property_type }}</span></span>
-                </div>
-                <div class="field">
-                    <span class="label">Date Registered</span>
-                    <span class="value">{{ property.date_registered }}</span>
+                {% endif %}
+
+                <div class="btn-row">
+                    <a href="/properties/{{ property.pk }}/edit/" class="btn btn-orange">Edit Property</a>
+                    <a href="/properties/{{ property.pk }}/delete/" class="btn btn-red">Delete Property</a>
                 </div>
             </div>
         </div>
-
-        <a href="/properties/" class="back-link">← Back to all properties</a>
-
     </div>
-
 </body>
 </html>

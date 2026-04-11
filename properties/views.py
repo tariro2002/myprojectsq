@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from django.db.models import Count, Sum
 from .models import Property
 from .forms import PropertyForm
 from rest_framework import status
@@ -12,11 +13,34 @@ from .serializers import PropertySerializer
 @login_required
 def property_list(request):
     search = request.GET.get('search', '')
+    property_type = request.GET.get('type', '')
+    status_filter = request.GET.get('status', '')
+    
+    properties = Property.objects.all()
+    
     if search:
-        properties = Property.objects.filter(address__icontains=search) | Property.objects.filter(owner_name__icontains=search)
-    else:
-        properties = Property.objects.all()
-    return render(request, 'properties/property_list.html', {'properties': properties, 'search': search})
+        properties = properties.filter(address__icontains=search) | properties.filter(owner_name__icontains=search)
+    if property_type:
+        properties = properties.filter(property_type=property_type)
+    if status_filter:
+        properties = properties.filter(status=status_filter)
+
+    # Stats for dashboard
+    total = Property.objects.count()
+    total_value = Property.objects.aggregate(Sum('value'))['value__sum'] or 0
+    by_type = Property.objects.values('property_type').annotate(count=Count('id'))
+    by_status = Property.objects.values('status').annotate(count=Count('id'))
+
+    return render(request, 'properties/property_list.html', {
+        'properties': properties,
+        'search': search,
+        'total': total,
+        'total_value': total_value,
+        'by_type': by_type,
+        'by_status': by_status,
+        'property_type': property_type,
+        'status_filter': status_filter,
+    })
 
 @login_required
 def property_detail(request, pk):
@@ -26,9 +50,11 @@ def property_detail(request, pk):
 @login_required
 def property_add(request):
     if request.method == 'POST':
-        form = PropertyForm(request.POST)
+        form = PropertyForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            property = form.save(commit=False)
+            property.registered_by = request.user
+            property.save()
             return redirect('property_list')
     else:
         form = PropertyForm()
@@ -38,7 +64,7 @@ def property_add(request):
 def property_edit(request, pk):
     property = get_object_or_404(Property, pk=pk)
     if request.method == 'POST':
-        form = PropertyForm(request.POST, instance=property)
+        form = PropertyForm(request.POST, request.FILES, instance=property)
         if form.is_valid():
             form.save()
             return redirect('property_list')
