@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zimbabwe Property Registry — eCadastre</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ink: #0D0B14;
+            --ink2: #130F1E;
+            --purple: #7C3AED;
+            --purple2: #9D5FF5;
+            --purple3: #C4A0FF;
+            --cream: #FAF7FF;
+            --cream2: #EFE8FF;
+            --stone: #8C7DAA;
+            --stone2: #B8A8D4;
+            --violet: #2D1B69;
+            --violet2: #4C2F9E;
+            --white: #FFFFFF;
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--ink);
+            color: var(--cream);
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        /* ── CUSTOM CURSOR ── */
+        .cursor {
+            width: 12px; height: 12px;
+            background: var(--purple2);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.15s ease;
+            mix-blend-mode: difference;
+        }
+
+        .cursor-ring {
+            width: 36px; height: 36px;
+            border: 1.5px solid var(--purple);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9998;
+            transition: all 0.08s ease;
+            opacity: 0.6;
+        }
+
+        /* ── NAV ── */
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            padding: 24px 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.4s ease;
+        }
+
+        nav.scrolled {
+            background: rgba(13,11,20,0.92);
+            backdrop-filter: blur(20px);
+            padding: 16px 60px;
+            border-bottom: 1px solid rgba(124,58,237,0.2);
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .nav-emblem {
+            width: 38px; height: 38px;
+            border: 1.5px solid var(--purple);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .nav-brand {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--cream);
+            letter-spacing: 0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 36px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--stone2);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 400;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover { color: var(--purple2); }
+
+        .nav-cta {
+            background: transparent;
+            border: 1px solid var(--purple);
+            color: var(--purple2) !important;
+            padding: 10px 22px;
+            border-radius: 6px;
+            font-size: 12px !important;
+            letter-spacing: 1.5px !important;
+            transition: all 0.3s !important;
+        }
+
+        .nav-cta:hover {
+            background: var(--purple) !important;
+            color: var(--cream) !important;
+        }
+
+        /* ── HERO ── */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            padding: 120px 60px 80px;
+        }
+
+        .hero-grid {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(124,58,237,0.07) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(124,58,237,0.07) 1px, transparent 1px);
+            background-size: 60px 60px;
+            animation: gridShift 20s linear infinite;
+        }
+
+        @keyframes gridShift {
+            0% { background-position: 0 0; }
+            100% { background-position: 60px 60px; }
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            animation: orbFloat 8s ease-in-out infinite;
+        }
+
+        .orb-1 {
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(124,58,237,0.18) 0%, transparent 70%);
+            top: -100px; right: -100px;
+            animation-delay: 0s;
+        }
+
+        .orb-2 {
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(45,27,105,0.3) 0%, transparent 70%);
+            bottom: -80px; left: 10%;
+            animation-delay: 3s;
+        }
+
+        .orb-3 {
+            width: 300px; height: 300px;
+            background: radial-gradient(circle, rgba(157,95,245,0.1) 0%, transparent 70%);
+            top: 40%; left: 40%;
+            animation-delay: 5s;
+        }
+
+        @keyframes orbFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(20px, -30px) scale(1.05); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+        }
+
+        .hero-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid rgba(124,58,237,0.4);
+            background: rgba(124,58,237,0.08);
+            padding: 7px 16px;
+            border-radius: 20px;
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--purple2);
+            margin-bottom: 32px;
+            animation: fadeUp 0.8s ease both;
+        }
+
+        .hero-tag::before {
+            content: '';
+            width: 6px; height: 6px;
+            background: var(--purple2);
+            border-radius: 50%;
+            animation: pulse 2s ease infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.8); }
+        }
+
+        .hero-headline {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(52px, 7vw, 96px);
+            font-weight: 300;
+            line-height: 1.0;
+            color: var(--cream);
+            margin-bottom: 28px;
+            animation: fadeUp 0.8s ease 0.15s both;
+        }
+
+        .hero-headline em {
+            font-style: italic;
+            color: var(--purple2);
+        }
+
+        .hero-headline .outline {
+            -webkit-text-stroke: 1px var(--cream);
+            color: transparent;
+        }
+
+        .hero-sub {
+            font-size: 16px;
+            font-weight: 300;
+            line-height: 1.7;
+            color: var(--stone2);
+            max-width: 520px;
+            margin-bottom: 48px;
+            animation: fadeUp 0.8s ease 0.3s both;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            animation: fadeUp 0.8s ease 0.45s both;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--purple), var(--purple2));
+            color: var(--cream);
+            padding: 16px 36px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            text-decoration: none;
+            transition: all 0.3s;
+            box-shadow: 0 8px 32px rgba(124,58,237,0.35);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, transparent, rgba(255,255,255,0.15));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 40px rgba(124,58,237,0.5);
+        }
+
+        .btn-primary:hover::after { opacity: 1; }
+
+        .btn-secondary {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--stone2);
+            text-decoration: none;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+            transition: color 0.2s;
+        }
+
+        .btn-secondary:hover { color: var(--cream); }
+
+        .btn-secondary .arrow {
+            width: 36px; height: 36px;
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary:hover .arrow {
+            border-color: var(--purple);
+            background: rgba(124,58,237,0.15);
+            transform: translateX(4px);
+        }
+
+        /* Floating stat cards */
+        .hero-float {
+            position: absolute;
+            right: 60px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            z-index: 2;
+            animation: fadeUp 0.8s ease 0.6s both;
+        }
+
+        .float-card {
+            background: rgba(124,58,237,0.06);
+            border: 1px solid rgba(124,58,237,0.25);
+            backdrop-filter: blur(20px);
+            border-radius: 14px;
+            padding: 20px 24px;
+            min-width: 200px;
+            transition: all 0.3s;
+        }
+
+        .float-card:hover {
+            background: rgba(124,58,237,0.12);
+            border-color: rgba(124,58,237,0.5);
+            transform: translateX(-4px);
+        }
+
+        .float-card-label {
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--stone);
+            margin-bottom: 6px;
+        }
+
+        .float-card-value {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 32px;
+            font-weight: 600;
+            color: var(--purple2);
+            line-height: 1;
+        }
+
+        .float-card-sub {
+            font-size: 11px;
+            color: var(--stone2);
+            margin-top: 4px;
+        }
+
+        .scroll-hint {
+            position: absolute;
+            bottom: 36px;
+            left: 60px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--stone);
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            animation: fadeUp 0.8s ease 0.8s both;
+        }
+
+        .scroll-line {
+            width: 40px;
+            height: 1px;
+            background: var(--stone);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scroll-line::after {
+            content: '';
+            position: absolute;
+            left: -100%;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--purple2);
+            animation: scanLine 2s ease infinite;
+        }
+
+        @keyframes scanLine {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── MARQUEE ── */
+        .marquee-strip {
+            background: var(--purple);
+            padding: 14px 0;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .marquee-inner {
+            display: inline-flex;
+            animation: marquee 25s linear infinite;
+        }
+
+        .marquee-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 20px;
+            padding: 0 32px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--cream);
+        }
+
+        .marquee-dot {
+            width: 5px; height: 5px;
+            background: var(--cream);
+            border-radius: 50%;
+            opacity: 0.5;
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* ── FEATURES ── */
+        .features {
+            padding: 120px 60px;
+            background: var(--cream);
+            color: var(--ink);
+            position: relative;
+        }
+
+        .features::before {
+            content: 'SERVICES';
+            position: absolute;
+            top: 60px; right: 60px;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 120px;
+            font-weight: 700;
+            color: rgba(124,58,237,0.05);
+            letter-spacing: -4px;
+            pointer-events: none;
+        }
+
+        .section-eyebrow {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .eyebrow-line {
+            width: 40px;
+            height: 1px;
+            background: var(--purple);
+        }
+
+        .eyebrow-text {
+            font-size: 11px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--purple);
+            font-weight: 600;
+        }
+
+        .section-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(36px, 4vw, 56px);
+            font-weight: 400;
+            line-height: 1.1;
+            color: var(--ink);
+            margin-bottom: 64px;
+            max-width: 560px;
+        }
+
+        .section-title em {
+            font-style: italic;
+            color: var(--violet2);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2px;
+            background: rgba(124,58,237,0.08);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .feature-item {
+            background: var(--cream);
+            padding: 48px 40px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-item::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--purple), var(--purple3));
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+
+        .feature-item:hover { background: var(--cream2); }
+        .feature-item:hover::after { transform: scaleX(1); }
+
+        .feature-icon {
+            width: 52px; height: 52px;
+            background: var(--ink);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            margin-bottom: 24px;
+            transition: all 0.3s;
+        }
+
+        .feature-item:hover .feature-icon {
+            background: var(--purple);
+            transform: rotate(-5deg) scale(1.05);
+        }
+
+        .feature-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--ink);
+            margin-bottom: 12px;
+        }
+
+        .feature-desc {
+            font-size: 14px;
+            font-weight: 300;
+            line-height: 1.7;
+            color: var(--stone);
+        }
+
+        /* ── HOW IT WORKS ── */
+        .how {
+            padding: 120px 60px;
+            background: var(--ink2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .how-inner {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .how-left .section-title { color: var(--cream); }
+        .how-left .section-title em { color: var(--purple2); }
+
+        .how-desc {
+            font-size: 15px;
+            font-weight: 300;
+            line-height: 1.8;
+            color: var(--stone2);
+            margin-bottom: 40px;
+        }
+
+        .how-steps { display: flex; flex-direction: column; gap: 0; }
+
+        .step {
+            display: flex;
+            gap: 24px;
+            align-items: flex-start;
+            padding: 28px 0;
+            border-bottom: 1px solid rgba(124,58,237,0.12);
+            transition: all 0.3s;
+            cursor: default;
+        }
+
+        .step:last-child { border-bottom: none; }
+        .step:hover { padding-left: 8px; }
+
+        .step-num {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 42px;
+            font-weight: 300;
+            color: rgba(124,58,237,0.25);
+            line-height: 1;
+            min-width: 48px;
+            transition: color 0.3s;
+        }
+
+        .step:hover .step-num { color: var(--purple2); }
+
+        .step-content h4 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--cream);
+            margin-bottom: 6px;
+        }
+
+        .step-content p {
+            font-size: 13px;
+            font-weight: 300;
+            color: var(--stone2);
+            line-height: 1.6;
+        }
+
+        /* Visual panel */
+        .how-visual { position: relative; }
+
+        .visual-card {
+            background: rgba(124,58,237,0.05);
+            border: 1px solid rgba(124,58,237,0.2);
+            border-radius: 20px;
+            padding: 36px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .visual-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--purple), transparent);
+        }
+
+        .visual-map {
+            background: rgba(45,27,105,0.3);
+            border: 1px solid rgba(76,47,158,0.4);
+            border-radius: 12px;
+            height: 220px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 64px;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .map-dots { position: absolute; inset: 0; }
+
+        .map-dot {
+            position: absolute;
+            width: 8px; height: 8px;
+            background: var(--purple2);
+            border-radius: 50%;
+            animation: dotPulse 3s ease infinite;
+        }
+
+        .map-dot::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            border: 1px solid var(--purple2);
+            animation: ripple 3s ease infinite;
+        }
+
+        @keyframes dotPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+        }
+
+        @keyframes ripple {
+            0% { transform: scale(1); opacity: 0.6; }
+            100% { transform: scale(3); opacity: 0; }
+        }
+
+        .visual-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+        }
+
+        .v-stat {
+            text-align: center;
+            padding: 16px;
+            background: rgba(124,58,237,0.06);
+            border-radius: 10px;
+            border: 1px solid rgba(124,58,237,0.15);
+        }
+
+        .v-stat-num {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--purple2);
+        }
+
+        .v-stat-label {
+            font-size: 10px;
+            letter-spacing: 1px;
+            color: var(--stone);
+            text-transform: uppercase;
+        }
+
+        /* ── CTA ── */
+        .cta-section {
+            padding: 120px 60px;
+            background: var(--violet);
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        .cta-inner {
+            position: relative;
+            z-index: 1;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .cta-tag {
+            display: inline-block;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 28px;
+        }
+
+        .cta-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(40px, 5vw, 72px);
+            font-weight: 400;
+            color: var(--cream);
+            line-height: 1.1;
+            margin-bottom: 24px;
+        }
+
+        .cta-title em {
+            font-style: italic;
+            color: var(--purple3);
+        }
+
+        .cta-sub {
+            font-size: 15px;
+            font-weight: 300;
+            color: rgba(255,255,255,0.6);
+            line-height: 1.7;
+            margin-bottom: 48px;
+        }
+
+        .cta-btns {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-white {
+            background: var(--cream);
+            color: var(--violet);
+            padding: 16px 40px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            text-decoration: none;
+            transition: all 0.3s;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        }
+
+        .btn-white:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 40px rgba(0,0,0,0.3);
+        }
+
+        .btn-outline-white {
+            border: 1px solid rgba(255,255,255,0.4);
+            color: rgba(255,255,255,0.8);
+            padding: 16px 40px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .btn-outline-white:hover {
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(255,255,255,0.7);
+            color: white;
+        }
+
+        /* ── FOOTER ── */
+        footer {
+            background: #06040F;
+            padding: 60px;
+            border-top: 1px solid rgba(124,58,237,0.2);
+        }
+
+        .footer-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 24px;
+        }
+
+        .footer-logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--cream);
+        }
+
+        .footer-logo span { color: var(--purple2); }
+
+        .footer-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+        }
+
+        .footer-links a {
+            color: var(--stone);
+            text-decoration: none;
+            font-size: 12px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover { color: var(--purple2); }
+
+        .footer-copy {
+            font-size: 12px;
+            color: var(--stone);
+            letter-spacing: 0.5px;
+        }
+
+        /* ── SCROLL REVEAL ── */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 1024px) {
+            .hero-float { display: none; }
+            .how-inner { grid-template-columns: 1fr; gap: 48px; }
+            .features-grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            nav { padding: 20px 24px; }
+            nav.scrolled { padding: 14px 24px; }
+            .hero { padding: 100px 24px 60px; }
+            .features, .how, .cta-section { padding: 80px 24px; }
+            footer { padding: 40px 24px; }
+            .features-grid { grid-template-columns: 1fr; }
+            .nav-links { display: none; }
+            .scroll-hint { left: 24px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav id="navbar">
+    <a href="#" class="nav-logo">
+        <div class="nav-emblem">🏛️</div>
+        <span class="nav-brand">ZimProperty</span>
+    </a>
+    <ul class="nav-links">
+        <li><a href="#features">Services</a></li>
+        <li><a href="#how">How It Works</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="/properties/" class="nav-cta">Access Registry →</a></li>
+    </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-grid"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <div class="hero-content">
+        <div class="hero-tag">Official Digital Land Registry</div>
+        <h1 class="hero-headline">
+            Zimbabwe's<br>
+            <em>Land Records,</em><br>
+            <span class="outline">Digitised.</span>
+        </h1>
+        <p class="hero-sub">
+            A modern cadastre system for registering, verifying and managing land parcels and property records across Zimbabwe — secure, transparent and accessible from anywhere.
+        </p>
+        <div class="hero-actions">
+            <a href="/properties/" class="btn-primary">Access the Registry</a>
+            <a href="#features" class="btn-secondary">
+                <span class="arrow">↓</span>
+                Explore Features
+            </a>
+        </div>
+    </div>
+
+    <div class="hero-float">
+        <div class="float-card">
+            <div class="float-card-label">Registered Parcels</div>
+            <div class="float-card-value">4,200+</div>
+            <div class="float-card-sub">Across Zimbabwe</div>
+        </div>
+        <div class="float-card">
+            <div class="float-card-label">Provinces Covered</div>
+            <div class="float-card-value">10</div>
+            <div class="float-card-sub">National coverage</div>
+        </div>
+        <div class="float-card">
+            <div class="float-card-label">System Uptime</div>
+            <div class="float-card-value">99.9%</div>
+            <div class="float-card-sub">Reliable access</div>
+        </div>
+    </div>
+
+    <div class="scroll-hint">
+        <div class="scroll-line"></div>
+        Scroll to explore
+    </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-strip">
+    <div class="marquee-inner">
+        <span class="marquee-item">Land Registration <span class="marquee-dot"></span></span>
+        <span class="marquee-item">Title Verification <span class="marquee-dot"></span></span>
+        <span class="marquee-item">Property Search <span class="marquee-dot"></span></span>
+        <span class="marquee-item">Cadastral Surveys <span class="marquee-dot"></span></span>
+        <span class="marquee-item">Digital Deeds <span class="marquee-dot"></span></span>
+        <span class="marquee-item">Boundary Management <span class="marquee-dot"></span></span>
+        <span class="marquee-item">Ownership Records <span class="marquee-dot"></span></span>
+        <span class="marquee-item">Land Registration <span class="marquee-dot"></span></span>
+        <span class="marquee-item">Title Verification <span class="marquee-dot"></span></span>
+        <span class="marquee-item">Property Search <span class="marquee-dot"></span></span>
+        <span class="marquee-item">Cadastral Surveys <span class="marquee-dot"></span></span>
+        <span class="marquee-item">Digital Deeds <span class="marquee-dot"></span></span>
+        <span class="marquee-item">Boundary Management <span class="marquee-dot"></span></span>
+        <span class="marquee-item">Ownership Records <span class="marquee-dot"></span></span>
+    </div>
+</div>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+    <div class="reveal">
+        <div class="section-eyebrow">
+            <div class="eyebrow-line"></div>
+            <span class="eyebrow-text">Core Services</span>
+        </div>
+        <h2 class="section-title">Everything you need to manage <em>land records</em></h2>
+    </div>
+
+    <div class="features-grid reveal">
+        <div class="feature-item">
+            <div class="feature-icon">🗺️</div>
+            <div class="feature-name">Property Search</div>
+            <p class="feature-desc">Search and retrieve detailed records for any registered land parcel or property by location, owner name, or parcel number.</p>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon">📄</div>
+            <div class="feature-name">Title Verification</div>
+            <p class="feature-desc">Instantly verify the authenticity and current status of property title deeds against the official digital registry.</p>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon">✍️</div>
+            <div class="feature-name">Land Registration</div>
+            <p class="feature-desc">Submit and process new land registrations digitally. Streamlined workflows replace slow manual paper-based procedures.</p>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon">📊</div>
+            <div class="feature-name">Analytics Dashboard</div>
+            <p class="feature-desc">Real-time insights into property distributions, valuations and status across regions with interactive visual reports.</p>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon">🔐</div>
+            <div class="feature-name">Secure Access</div>
+            <p class="feature-desc">Token-secured authentication with role-based access control ensures sensitive land data is protected and auditable.</p>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon">🌍</div>
+            <div class="feature-name">National Coverage</div>
+            <p class="feature-desc">Covering all ten provinces of Zimbabwe, accessible from anywhere in the world with a stable internet connection.</p>
+        </div>
+    </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+    <div class="how-inner">
+        <div class="how-left reveal">
+            <div class="section-eyebrow">
+                <div class="eyebrow-line"></div>
+                <span class="eyebrow-text" style="color:var(--purple2)">How It Works</span>
+            </div>
+            <h2 class="section-title" style="color:var(--cream)">Simple, fast & <em>transparent</em></h2>
+            <p class="how-desc">The Zimbabwe Property Registry digitises the entire land administration process — from initial registration to final title verification — in just a few steps.</p>
+
+            <div class="how-steps">
+                <div class="step">
+                    <div class="step-num">01</div>
+                    <div class="step-content">
+                        <h4>Create an Account</h4>
+                        <p>Register with your credentials to gain secure access to the national property registry system.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-num">02</div>
+                    <div class="step-content">
+                        <h4>Search or Register Property</h4>
+                        <p>Look up existing parcels or submit a new property registration with all required documentation.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-num">03</div>
+                    <div class="step-content">
+                        <h4>Verify & Download Records</h4>
+                        <p>Get official verification of property details and download certified digital records instantly.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="how-visual reveal">
+            <div class="visual-card">
+                <div class="visual-map">
+                    <div class="map-dots">
+                        <div class="map-dot" style="top:30%;left:45%;animation-delay:0s"></div>
+                        <div class="map-dot" style="top:55%;left:30%;animation-delay:1s"></div>
+                        <div class="map-dot" style="top:40%;left:65%;animation-delay:2s"></div>
+                        <div class="map-dot" style="top:70%;left:55%;animation-delay:0.5s"></div>
+                        <div class="map-dot" style="top:25%;left:25%;animation-delay:1.5s"></div>
+                    </div>
+                    🌍
+                </div>
+                <div class="visual-stats">
+                    <div class="v-stat">
+                        <div class="v-stat-num">10</div>
+                        <div class="v-stat-label">Provinces</div>
+                    </div>
+                    <div class="v-stat">
+                        <div class="v-stat-num">3</div>
+                        <div class="v-stat-label">Types</div>
+                    </div>
+                    <div class="v-stat">
+                        <div class="v-stat-num">24/7</div>
+                        <div class="v-stat-label">Access</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="about">
+    <div class="cta-inner reveal">
+        <div class="cta-tag">Get Started Today</div>
+        <h2 class="cta-title">Ready to access Zimbabwe's <em>land registry?</em></h2>
+        <p class="cta-sub">Join thousands of property owners, surveyors and legal practitioners using Zimbabwe's official digital cadastre system for secure, transparent land administration.</p>
+        <div class="cta-btns">
+            <a href="/properties/" class="btn-white">Access the Registry</a>
+            <a href="/login/" class="btn-outline-white">Sign In →</a>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <div class="footer-inner">
+        <div class="footer-logo">Zim<span>Property</span> Registry</div>
+        <ul class="footer-links">
+            <li><a href="#features">Services</a></li>
+            <li><a href="#how">How It Works</a></li>
+            <li><a href="/properties/">Registry</a></li>
+            <li><a href="/login/">Sign In</a></li>
+        </ul>
+        <div class="footer-copy">© 2026 Zimbabwe Property Registry · DSG</div>
+    </div>
+</footer>
+
+<script>
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+
+    document.addEventListener('mousemove', e => {
+        mx = e.clientX; my = e.clientY;
+        cursor.style.left = mx - 6 + 'px';
+        cursor.style.top = my - 6 + 'px';
+    });
+
+    function animateRing() {
+        rx += (mx - rx - 18) * 0.12;
+        ry += (my - ry - 18) * 0.12;
+        ring.style.left = rx + 'px';
+        ring.style.top = ry + 'px';
+        requestAnimationFrame(animateRing);
+    }
+    animateRing();
+
+    document.querySelectorAll('a, button').forEach(el => {
+        el.addEventListener('mouseenter', () => {
+            cursor.style.transform = 'scale(2)';
+            ring.style.transform = 'scale(1.5)';
+        });
+        el.addEventListener('mouseleave', () => {
+            cursor.style.transform = 'scale(1)';
+            ring.style.transform = 'scale(1)';
+        });
+    });
+
+    window.addEventListener('scroll', () => {
+        document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+    });
+
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+            if (e.isIntersecting) e.target.classList.add('visible');
+        });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
